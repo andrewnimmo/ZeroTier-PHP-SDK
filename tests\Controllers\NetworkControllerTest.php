@@ -97,8 +97,9 @@ New networks can be created by POSTing to `/api/network` with no networkId param
     public function testUpdateOrCreateANetwork11()
     {
         // Parameters for the API call
-        $networkId = '0000000000000000';
-        $body = APIHelper::deserialize(
+        $input = array();
+        $input['networkId'] = '0000000000000000';
+        $input['body'] = APIHelper::deserialize(
             '{  "id": "",  "type": "",  "clock": 0,  "ui": {},  "rulesSource": "",  "description": "",  "permissi' .
             'ons": {    "{id}": {      "r": false,      "m": false,      "d": false,      "a": false,      "o": f' .
             'alse,      "t": ""    }  },  "onlineMemberCount": 0,  "capabilitiesByName": {},  "tagsByName": {},  ' .
@@ -114,7 +115,7 @@ New networks can be created by POSTing to `/api/network` with no networkId param
         $result = null;
         self::$controller->setHttpCallBack($this->httpResponse);
         try {
-            $result = self::$controller->updateOrCreateANetwork($networkId, $body);
+            $result = self::$controller->updateOrCreateANetwork($input);
         } catch (APIException $e) {
         }
 

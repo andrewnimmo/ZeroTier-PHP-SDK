@@ -344,9 +344,7 @@ $result = $network->retrieveANetwork($networkId);
 
 
 ```php
-function updateOrCreateANetwork(
-        $networkId,
-        $body)
+function updateOrCreateANetwork($options)
 ```
 
 #### Parameters
@@ -362,10 +360,14 @@ function updateOrCreateANetwork(
 
 ```php
 $networkId = '0000000000000000';
+$collect['networkId'] = $networkId;
+
 $bodyValue = "{  \"id\": \"\",  \"type\": \"\",  \"clock\": 0,  \"ui\": {},  \"rulesSource\": \"\",  \"description\": \"\",  \"permissions\": {    \"{id}\": {      \"r\": false,      \"m\": false,      \"d\": false,      \"a\": false,      \"o\": false,      \"t\": \"\"    }  },  \"onlineMemberCount\": 0,  \"capabilitiesByName\": {},  \"tagsByName\": {},  \"circuitTestEvery\": 0,  \"config\": {    \"id\": \"\",    \"nwid\": \"\",    \"name\": \"\",    \"objtype\": \"\",    \"private\": false,    \"creationTime\": 0,    \"revision\": 0,    \"lastModified\": 0,    \"multicastLimit\": 0,    \"routes\": [],    \"rules\": [],    \"tags\": [],    \"capabilities\": [],    \"totalMemberCount\": 0,    \"activeMemberCount\": 0,    \"authTokens\": [],    \"authorizedMemberCount\": 0,    \"v4AssignMode\": {},    \"v6AssignMode\": {}  }}";
 $body = APIHelper::deserialize($bodyValue);
+$collect['body'] = $body;
 
-$result = $network->updateOrCreateANetwork($networkId, $body);
+
+$result = $network->updateOrCreateANetwork($collect);
 
 ```
 
@@ -433,9 +435,7 @@ $member = $client->getMember();
 
 
 ```php
-function retrieveAMember(
-        $networkId,
-        $nodeId)
+function retrieveAMember($options)
 ```
 
 #### Parameters
@@ -451,9 +451,13 @@ function retrieveAMember(
 
 ```php
 $networkId = 'networkId';
-$nodeId = 'nodeId';
+$collect['networkId'] = $networkId;
 
-$result = $member->retrieveAMember($networkId, $nodeId);
+$nodeId = 'nodeId';
+$collect['nodeId'] = $nodeId;
+
+
+$result = $member->retrieveAMember($collect);
 
 ```
 
@@ -464,10 +468,7 @@ $result = $member->retrieveAMember($networkId, $nodeId);
 
 
 ```php
-function updateOrAddAMember(
-        $networkId,
-        $nodeId,
-        $body)
+function updateOrAddAMember($options)
 ```
 
 #### Parameters
@@ -484,10 +485,16 @@ function updateOrAddAMember(
 
 ```php
 $networkId = 'networkId';
-$nodeId = 'nodeId';
-$body = new Member();
+$collect['networkId'] = $networkId;
 
-$result = $member->updateOrAddAMember($networkId, $nodeId, $body);
+$nodeId = 'nodeId';
+$collect['nodeId'] = $nodeId;
+
+$body = new Member();
+$collect['body'] = $body;
+
+
+$result = $member->updateOrAddAMember($collect);
 
 ```
 

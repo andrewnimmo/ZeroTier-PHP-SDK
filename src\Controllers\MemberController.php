@@ -44,14 +44,14 @@ class MemberController extends BaseController
     /**
      * Retrieve a Member
      *
-     * @param string $networkId 16-digit ZeroTier network ID
-     * @param string $nodeId    10-digit ZeroTier node ID (a.k.a. ZeroTier address)
+     * @param  array  $options    Array with all options for search
+     * @param string $options['networkId'] 16-digit ZeroTier network ID
+     * @param string $options['nodeId']    10-digit ZeroTier node ID (a.k.a. ZeroTier address)
      * @return mixed response from the API call
      * @throws APIException Thrown if API call fails
      */
     public function retrieveAMember(
-        $networkId,
-        $nodeId
+        $options
     ) {
 
         //the base uri for api requests
@@ -62,8 +62,8 @@ class MemberController extends BaseController
 
         //process optional query parameters
         $_queryBuilder = APIHelper::appendUrlWithTemplateParameters($_queryBuilder, array (
-            'networkId' => $networkId,
-            'nodeId'    => $nodeId,
+            'networkId' => $this->val($options, 'networkId'),
+            'nodeId'    => $this->val($options, 'nodeId'),
             ));
 
         //validate and preprocess url
@@ -104,16 +104,15 @@ class MemberController extends BaseController
     /**
      * Update or add a Member
      *
-     * @param string        $networkId 16-digit ZeroTier network ID
-     * @param string        $nodeId    10-digit ZeroTier node ID (a.k.a. ZeroTier address)
-     * @param Models\Member $body      TODO: type description here
+     * @param  array  $options    Array with all options for search
+     * @param string        $options['networkId'] 16-digit ZeroTier network ID
+     * @param string        $options['nodeId']    10-digit ZeroTier node ID (a.k.a. ZeroTier address)
+     * @param Models\Member $options['body']      TODO: type description here
      * @return mixed response from the API call
      * @throws APIException Thrown if API call fails
      */
     public function updateOrAddAMember(
-        $networkId,
-        $nodeId,
-        $body
+        $options
     ) {
 
         //the base uri for api requests
@@ -124,8 +123,8 @@ class MemberController extends BaseController
 
         //process optional query parameters
         $_queryBuilder = APIHelper::appendUrlWithTemplateParameters($_queryBuilder, array (
-            'networkId' => $networkId,
-            'nodeId'    => $nodeId,
+            'networkId' => $this->val($options, 'networkId'),
+            'nodeId'    => $this->val($options, 'nodeId'),
             ));
 
         //validate and preprocess url
@@ -146,7 +145,7 @@ class MemberController extends BaseController
         }
 
         //and invoke the API call request to fetch the response
-        $response = Request::post($_queryUrl, $_headers, Request\Body::Json($body));
+        $response = Request::post($_queryUrl, $_headers, Request\Body::Json($this->val($options, 'body')));
 
         $_httpResponse = new HttpResponse($response->code, $response->headers, $response->raw_body);
         $_httpContext = new HttpContext($_httpRequest, $_httpResponse);
@@ -162,5 +161,21 @@ class MemberController extends BaseController
         $mapper = $this->getJsonMapper();
 
         return $mapper->mapClass($response->body, 'ZeroTierCentralAPILib\\Models\\Member');
+    }
+
+
+    /**
+    * Array access utility method
+     * @param  array          $arr         Array of values to read from
+     * @param  string         $key         Key to get the value from the array
+     * @param  mixed|null     $default     Default value to use if the key was not found
+     * @return mixed
+     */
+    private function val($arr, $key, $default = null)
+    {
+        if (isset($arr[$key])) {
+            return is_bool($arr[$key]) ? var_export($arr[$key], true) : $arr[$key];
+        }
+        return $default;
     }
 }

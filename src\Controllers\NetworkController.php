@@ -101,14 +101,14 @@ class NetworkController extends BaseController
     /**
      * Update or create a Network
      *
-     * @param string         $networkId 16-digit ZeroTier network ID
-     * @param Models\Network $body      TODO: type description here
+     * @param  array  $options    Array with all options for search
+     * @param string         $options['networkId'] 16-digit ZeroTier network ID
+     * @param Models\Network $options['body']      TODO: type description here
      * @return mixed response from the API call
      * @throws APIException Thrown if API call fails
      */
     public function updateOrCreateANetwork(
-        $networkId,
-        $body
+        $options
     ) {
 
         //the base uri for api requests
@@ -119,7 +119,7 @@ class NetworkController extends BaseController
 
         //process optional query parameters
         $_queryBuilder = APIHelper::appendUrlWithTemplateParameters($_queryBuilder, array (
-            'networkId' => $networkId,
+            'networkId' => $this->val($options, 'networkId'),
             ));
 
         //validate and preprocess url
@@ -140,7 +140,7 @@ class NetworkController extends BaseController
         }
 
         //and invoke the API call request to fetch the response
-        $response = Request::post($_queryUrl, $_headers, Request\Body::Json($body));
+        $response = Request::post($_queryUrl, $_headers, Request\Body::Json($this->val($options, 'body')));
 
         $_httpResponse = new HttpResponse($response->code, $response->headers, $response->raw_body);
         $_httpContext = new HttpContext($_httpRequest, $_httpResponse);
@@ -258,5 +258,21 @@ class NetworkController extends BaseController
         $mapper = $this->getJsonMapper();
 
         return $mapper->mapClassArray($response->body, 'ZeroTierCentralAPILib\\Models\\Network');
+    }
+
+
+    /**
+    * Array access utility method
+     * @param  array          $arr         Array of values to read from
+     * @param  string         $key         Key to get the value from the array
+     * @param  mixed|null     $default     Default value to use if the key was not found
+     * @return mixed
+     */
+    private function val($arr, $key, $default = null)
+    {
+        if (isset($arr[$key])) {
+            return is_bool($arr[$key]) ? var_export($arr[$key], true) : $arr[$key];
+        }
+        return $default;
     }
 }

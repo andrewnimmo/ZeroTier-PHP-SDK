@@ -17,7 +17,7 @@ class Configuration
      * The base Uri for API calls
      * @var string
      */
-    public static $BASEURI = 'http://www.example.com';
+    public static $BASEURI = 'http://localhost';
 
     /**
      * The OAuth 2.0 access token to be set before API calls
