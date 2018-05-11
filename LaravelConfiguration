@@ -1,5 +1,5 @@
 #Step 1: clone repo to you laravel
-	``` git clone https://github.com/lola27/ZeroTier-PHP-SDK.git -b zerotier-laravel ```
+	``` git clone https://github.com/molander/ZeroTier-PHP-SDK.git -b zerotier-laravel ```
 #Step 2: add follow line to laravel root composer.json -> autoload -> per-4
 	``` "ZeroTierCentralAPILib\\": "ZeroTier-PHP-SDK/src/“ ```
 	e.g. 
