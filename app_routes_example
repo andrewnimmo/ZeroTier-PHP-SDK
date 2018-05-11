@@ -1,0 +1,121 @@
+<?php
+use ZeroTierCentralAPILib\ZeroTierCentralAPIClient;
+use ZeroTierCentralAPILib\Controllers;
+use ZeroTierCentralAPILib\APIHelper;
+use ZeroTierCentralAPILib\Tests\UserControllerTest;
+
+Route::get('zerotierapi/', function() {
+    $oAuthAccessToken = "rK4rumasemnAbKG7xa9Y6mdVn96qtU5t";
+    $client = new ZeroTierCentralAPILib\ZeroTierCentralAPIClient($oAuthAccessToken);
+
+    //Get singleton instance
+    $generalQueries = $client->getGeneralQueries();
+    
+    //getStatusAndConfigurationInformation
+    $result_sci = $generalQueries->getStatusAndConfigurationInformation();
+    $status_config = json_encode($result_sci);
+    
+    //getCurrentlyAuthenticatedUser
+    $result_au = $generalQueries->getCurrentlyAuthenticatedUser();
+    $auth_user = json_encode($result_au);
+    
+    //getGenerateARandomToken
+    $result_gart = $generalQueries->getGenerateARandomToken();
+    $random_token = json_encode($result_gart);
+    
+    return $status_config;
+});
+/*
+|--------------------------------------------------------------------------
+| Routes File
+|--------------------------------------------------------------------------
+|
+| Here is where you will register all of the routes in an application.
+| It's a breeze. Simply tell Laravel the URIs it should respond to
+| and give it the controller to call when that URI is requested.
+|
+*/
+
+
+
+// create an item
+Route::post('test', function(){
+    echo "POST";
+});
+
+// read an item 
+Route::get('test', function(){
+    echo "GET";
+});
+
+// update an item
+Route::put('test', function(){
+    echo "PUT";
+});
+
+// delete an item
+Route::delete('test', function(){
+    echo "DELETE";
+});
+/*
+|--------------------------------------------------------------------------
+| Application Routes
+|--------------------------------------------------------------------------
+|
+| This route group applies the "web" middleware group to every route
+| it contains. The "web" middleware group is defined in your HTTP
+| kernel and includes session state, CSRF protection, and more.
+|
+*/
+/*
+Route::get('/', function () {
+        return view('layouts/trueview');
+    });
+    
+    Route::get('/test', function () {
+        return view('layouts/trueview');
+    });
+    
+Route::get('/particial/index', function () {
+    return view('particial.index');
+});
+*/    
+
+Route::group(['middleware' => 'web'], function () {
+    Route::auth();
+    Route::get('/', function () {
+        return view('welcome');
+    });
+  
+  /*
+    Route::get('/', function () {
+        return view('layouts/trueview');
+    })->middleware('auth');
+    
+    Route::get('/test', function () {
+        return view('layouts/trueview');
+    })->middleware('auth');
+    */
+    Route::get('/particial/index', function () {
+        return view('particial.index');
+    })->middleware('auth');
+
+    Route::get('/customer/{id}', function ($id) {
+    
+        $customer = App\customer::find($id);
+        echo "Hello my name is ". $customer->name;
+    });
+
+    Route::get('/get_customer', function () {
+        $customer = App\customer::where('name', '=', 'lola')->first();
+        echo $customer->id;
+    })->middleware('auth');
+
+    Route::get('/home', 'HomeController@index');
+});
+
+Route::group(['middleware' => 'web'], function () {
+    Route::auth();
+
+    Route::get('/home', 'HomeController@index');
+});

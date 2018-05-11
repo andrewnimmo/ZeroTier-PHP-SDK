@@ -1,0 +1,54 @@
+#Step 1: clone repo to you laravel
+	``` git clone https://github.com/lola27/ZeroTier-PHP-SDK.git -b zerotier-laravel ```
+#Step 2: add follow line to laravel root composer.json -> autoload -> per-4
+	``` "ZeroTierCentralAPILib\\": "ZeroTier-PHP-SDK/src/“ ```
+	e.g. 
+		``` 
+		"autoload": {
+        	"classmap": [
+            	"database"
+        	],
+        	"psr-4": {
+            	"App\\": "app/",
+            	"ZeroTierCentralAPILib\\": "ZeroTier-PHP-SDK/src/"
+        	}
+    	}, 
+    	```
+#Step 3: install 'mashape/unirest-php' and 'apimatic/jsonmapper'
+	``` composer require mashape/unirest-php ```
+	``` composer require apimatic/jsonmapper ```
+
+#Step 4: update ZeroTier-PHP-SDK/src/Configuration.php, set $BASEURI equal to your zerotier address
+	e.g. 
+		``` $BASEURI = https://my.zerotier.com/ ```
+
+#Step 5: testing zerotier api, add follow lines to laravel routes.php (app/Http/routes.php)
+	``` 
+	use ZeroTierCentralAPILib\ZeroTierCentralAPIClient;
+	use ZeroTierCentralAPILib\Controllers;
+	use ZeroTierCentralAPILib\APIHelper;
+	use ZeroTierCentralAPILib\Tests\UserControllerTest;
+
+	Route::get('zerotierapi/', function() {
+	    $oAuthAccessToken = "rK4rumasemnAbKG7xa9Y6mdVn96qtU";
+	    $client = new ZeroTierCentralAPILib\ZeroTierCentralAPIClient($oAuthAccessToken);
+
+	    //Get singleton instance
+	    $generalQueries = $client->getGeneralQueries();
+	    
+	    //getStatusAndConfigurationInformation
+	    $result_sci = $generalQueries->getStatusAndConfigurationInformation();
+	    $status_config = json_encode($result_sci);
+	    
+	    //getCurrentlyAuthenticatedUser
+	    $result_au = $generalQueries->getCurrentlyAuthenticatedUser();
+	    $auth_user = json_encode($result_au);
+	    
+	    //getGenerateARandomToken
+	    $result_gart = $generalQueries->getGenerateARandomToken();
+	    $random_token = json_encode($result_gart);
+	    
+	    return $status_config;
+	});
+	```
+#Step 6: goto 'https://LARAVEL_ADDRESS/zerotierapi', will see zerotier status and configuration info
