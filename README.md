@@ -1,5 +1,4 @@
 # ZeroTier-PHP-SDK
-# ZeroTier-PHP-SDK
 <<<<<<< zerotier-laravel
 # Getting started
 
