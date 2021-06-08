@@ -42,6 +42,63 @@ class MemberController extends BaseController
     }
 
     /**
+     * Retrieve members
+     *
+     * @param array $options Array with all options for search
+     * @param string $options['networkId'] 16-digit ZeroTier network ID
+     * @return mixed response from the API call
+     * @throws APIException Thrown if API call fails
+     */
+    public function retrieveMembers(
+        $options
+    ) {
+        //the base uri for api requests
+        $_queryBuilder = Configuration::$BASEURI;
+
+        //prepare query string for API call
+        $_queryBuilder = $_queryBuilder.'/api/network/{networkId}/member';
+
+        //process optional query parameters
+        $_queryBuilder = APIHelper::appendUrlWithTemplateParameters($_queryBuilder, array (
+            'networkId' => $this->val($options, 'networkId'),
+        ));
+
+        //validate and preprocess url
+        $_queryUrl = APIHelper::cleanUrl($_queryBuilder);
+
+        //prepare headers
+        $_headers = array (
+            // 'user-agent'    => 'APIMATIC 2.0',
+            'Accept'        => 'application/json',
+            'Authorization' => sprintf('Bearer %1$s', Configuration::$oAuthAccessToken)
+        );
+
+        //call on-before Http callback
+        $_httpRequest = new HttpRequest(HttpMethod::GET, $_headers, $_queryUrl);
+        if ($this->getHttpCallBack() != null) {
+            $this->getHttpCallBack()->callOnBeforeRequest($_httpRequest);
+        }
+
+        //and invoke the API call request to fetch the response
+        $response = Request::get($_queryUrl, $_headers);
+
+        $_httpResponse = new HttpResponse($response->code, $response->headers, $response->raw_body);
+        $_httpContext = new HttpContext($_httpRequest, $_httpResponse);
+
+        //call on-after Http callback
+        if ($this->getHttpCallBack() != null) {
+            $this->getHttpCallBack()->callOnAfterRequest($_httpContext);
+        }
+
+        //handle errors defined at the API level
+        $this->validateResponse($_httpResponse, $_httpContext);
+
+        $mapper = $this->getJsonMapper();
+
+        return $mapper->mapClassArray($response->body, 'ZeroTierCentralAPILib\\Models\\Member');
+    }
+
+    /**
      * Retrieve a Member
      *
      * @param  array  $options    Array with all options for search
